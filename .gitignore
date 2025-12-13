@@ -17,4 +17,4 @@
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Go
 
 .DS_Store
-
+.env
