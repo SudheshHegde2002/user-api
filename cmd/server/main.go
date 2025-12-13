@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"user-api/db/sqlc"
 	"github.com/joho/godotenv"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main(){
@@ -16,7 +17,7 @@ func main(){
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
-	if dbUrl == "" {
+	if dbURL == "" {
 		log.Fatal("Database url is not set")
 	}
 
@@ -26,4 +27,12 @@ func main(){
 	}
 
 	queries := sqlc.New(db)
+
+	app := fiber.New()
+
+	app.Get("/", func(c*fiber.Ctx)error{
+		return c.SendString("go fiber running")
+	})
+
+	log.Fatal(app.Listen(":3000"))
 }
