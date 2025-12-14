@@ -43,3 +43,20 @@ func (r *UserRepository) ListUsers(
 ) ([]sqlc.User, error) {
 	return r.queries.ListUsers(ctx)
 }
+
+func (r *UserRepository) UpdateUser(
+	ctx context.Context,
+	id int32,
+	name string,
+	dob string,
+) (sqlc.User, error) {
+	parsedDob, err := time.Parse("2006-01-02", dob)
+	if err != nil {
+		return sqlc.User{}, err
+	}
+	return r.queries.UpdateUser(ctx, sqlc.UpdateUserParams{
+		ID:   id,
+		Name: name,
+		Dob:  pgtype.Date{Time: parsedDob, Valid: true},
+	})
+}

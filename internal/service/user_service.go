@@ -68,3 +68,27 @@ func (s *UserService) ListUsers(
 
 	return resp, nil
 }
+
+func (s *UserService) UpdateUser(
+	ctx context.Context,
+	id int32,
+	name string,
+	dobStr string,
+) (*models.UserResponse, error) {
+
+	if _, err := time.Parse("2006-01-02", dobStr); err != nil {
+		return nil, err
+	}
+
+	u, err := s.repo.UpdateUser(ctx, id, name, dobStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.UserResponse{
+		ID:   u.ID,
+		Name: u.Name,
+		Dob:  u.Dob.Time,
+		Age:  calculateAge(u.Dob.Time),
+	}, nil
+}
