@@ -7,6 +7,7 @@ import (
 	"user-api/db/sqlc"
 	"user-api/internal/handler"
 	"user-api/internal/logger"
+	"user-api/internal/middleware"
 	"user-api/internal/repository"
 	"user-api/internal/routes"
 	"user-api/internal/service"
@@ -50,6 +51,8 @@ func main() {
 	queries := sqlc.New(db)
 
 	app := fiber.New()
+	app.Use(middleware.RequestID())
+	app.Use(middleware.RequestLogger())
 
 	repo := repository.NewUserRepository(queries)
 	service := service.NewUserService(repo)
