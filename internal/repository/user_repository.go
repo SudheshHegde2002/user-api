@@ -60,3 +60,10 @@ func (r *UserRepository) UpdateUser(
 		Dob:  pgtype.Date{Time: parsedDob, Valid: true},
 	})
 }
+
+func (r *UserRepository) DeleteUser(
+	ctx context.Context,
+	id int32,
+) error {
+	return r.queries.DeleteUser(ctx, id)
+}

@@ -92,3 +92,10 @@ func (s *UserService) UpdateUser(
 		Age:  calculateAge(u.Dob.Time),
 	}, nil
 }
+
+func (s *UserService) DeleteUser(
+	ctx context.Context,
+	id int32,
+) error {
+	return s.repo.DeleteUser(ctx, id)
+}
