@@ -37,3 +37,9 @@ func (r *UserRepository) GetUserByID(
 ) (sqlc.User, error) {
 	return r.queries.GetUserByID(ctx, id)
 }
+
+func (r *UserRepository) ListUsers(
+	ctx context.Context,
+) ([]sqlc.User, error) {
+	return r.queries.ListUsers(ctx)
+}

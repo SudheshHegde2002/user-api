@@ -46,3 +46,25 @@ func (s *UserService) GetUserByID(
 		Age:  age,
 	}, nil
 }
+
+func (s *UserService) ListUsers(
+	ctx context.Context,
+) ([]models.UserResponse, error) {
+	users, err := s.repo.ListUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := make([]models.UserResponse, 0, len(users))
+
+	for _, u := range users {
+		resp = append(resp, models.UserResponse{
+			ID:   u.ID,
+			Name: u.Name,
+			Dob:  u.Dob.Time,
+			Age:  calculateAge(u.Dob.Time),
+		})
+	}
+
+	return resp, nil
+}
