@@ -55,8 +55,11 @@ func (s *UserService) GetUserByID(
 
 func (s *UserService) ListUsers(
 	ctx context.Context,
+	limit int32,
+	offset int32,
 ) ([]models.UserResponse, error) {
-	users, err := s.repo.ListUsers(ctx)
+
+	users, err := s.repo.ListUsers(ctx, limit, offset)
 	if err != nil {
 		return nil, err
 	}
