@@ -1,16 +1,21 @@
 package main
 
 import (
-	"os"
 	"context"
 	"log"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"os"
 	"user-api/db/sqlc"
-	"github.com/joho/godotenv"
+	"user-api/internal/handler"
+	"user-api/internal/repository"
+	"user-api/internal/routes"
+	"user-api/internal/service"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 )
 
-func main(){
+func main() {
 	envErr := godotenv.Load()
 	if envErr != nil {
 		log.Fatal("Error loading .env file", envErr)
@@ -30,7 +35,12 @@ func main(){
 
 	app := fiber.New()
 
-	app.Get("/", func(c*fiber.Ctx)error{
+	repo := repository.NewUserRepository(queries)
+	service := service.NewUserService(repo)
+	handler := handler.NewUserHandler(service)
+	routes.RegisterUserRoutes(app, handler)
+
+	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("go fiber running")
 	})
 
