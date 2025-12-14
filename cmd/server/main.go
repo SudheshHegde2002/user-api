@@ -11,6 +11,7 @@ import (
 	"user-api/internal/service"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -26,7 +27,13 @@ func main() {
 		log.Fatal("Database url is not set")
 	}
 
-	db, err := pgxpool.New(context.Background(), dbURL)
+	config, err := pgxpool.ParseConfig(dbURL)
+	if err != nil {
+		log.Fatal("Error parsing db config", err)
+	}
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+
+	db, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		log.Fatal("Some error when connecting to db", err)
 	}

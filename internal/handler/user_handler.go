@@ -58,9 +58,20 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 	user, err := h.service.GetUserByID(c.Context(), int32(id))
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{
-			"error": "user not found",
+			"error": err.Error(),
 		})
 	}
 
 	return c.JSON(user)
+}
+
+func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
+	users, err := h.service.ListUsers(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "failed to fetch users",
+		})
+	}
+
+	return c.JSON(users)
 }
