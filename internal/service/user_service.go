@@ -22,17 +22,24 @@ func (s *UserService) CreateUser(
 	ctx context.Context,
 	name string,
 	dobStr string,
-) error {
+) (*models.UserResponse, error) {
 	_, err := time.Parse("2006-01-02", dobStr)
 	if err != nil {
 		logger.Log.Warn("invalid dob format",
 			zap.String("dob", dobStr),
 		)
-		return err
+		return nil, err
 	}
 
-	_, err = s.repo.CreateUser(ctx, name, dobStr)
-	return err
+	u, err := s.repo.CreateUser(ctx, name, dobStr)
+	if err != nil {
+		return nil, err
+	}
+	return &models.UserResponse{
+		ID:   u.ID,
+		Name: u.Name,
+		Dob:  u.Dob.Time,
+	}, nil
 }
 
 func (s *UserService) GetUserByID(

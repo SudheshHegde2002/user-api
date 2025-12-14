@@ -38,21 +38,23 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := h.service.CreateUser(c.Context(), req.Name, req.Dob); err != nil {
+	user, err := h.service.CreateUser(c.Context(), req.Name, req.Dob)
+	if err != nil {
 		logger.Log.Error("failed to create user",
 			zap.Error(err),
 			zap.String("name", req.Name),
 		)
 
 		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "Failed to create user",
 		})
 	}
 
 	logger.Log.Info("user created",
-		zap.String("name", req.Name),
+		zap.Int32("id", user.ID),
+		zap.String("name", user.Name),
 	)
-	return c.SendStatus(201)
+	return c.Status(201).JSON(user)
 }
 
 func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
