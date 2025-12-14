@@ -30,3 +30,10 @@ func (r *UserRepository) CreateUser(
 		Dob:  pgtype.Date{Time: parsedDob, Valid: true},
 	})
 }
+
+func (r *UserRepository) GetUserByID(
+	ctx context.Context,
+	id int32,
+) (sqlc.User, error) {
+	return r.queries.GetUserByID(ctx, id)
+}

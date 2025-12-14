@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"time"
+	"user-api/internal/models"
 	"user-api/internal/repository"
 )
 
@@ -18,7 +19,7 @@ func (s *UserService) CreateUser(
 	ctx context.Context,
 	name string,
 	dobStr string,
-)error{
+) error {
 	_, err := time.Parse("2006-01-02", dobStr)
 	if err != nil {
 		return err
@@ -26,4 +27,22 @@ func (s *UserService) CreateUser(
 
 	_, err = s.repo.CreateUser(ctx, name, dobStr)
 	return err
+}
+
+func (s *UserService) GetUserByID(
+	ctx context.Context,
+	id int32,
+) (*models.UserResponse, error) {
+	user, err := s.repo.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	age := calculateAge(user.Dob.Time)
+
+	return &models.UserResponse{
+		ID:   user.ID,
+		Name: user.Name,
+		Dob:  user.Dob.Time,
+		Age:  age,
+	}, nil
 }
