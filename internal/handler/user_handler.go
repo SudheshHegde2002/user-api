@@ -83,12 +83,25 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
-	users, err := h.service.ListUsers(c.Context())
+	limit, err := strconv.Atoi(c.Query("limit", "10"))
+	if err != nil || limit <= 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid limit"})
+	}
+
+	offset, err := strconv.Atoi(c.Query("offset", "0"))
+	if err != nil || offset < 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid offset"})
+	}
+
+	users, err := h.service.ListUsers(
+		c.Context(),
+		int32(limit),
+		int32(offset),
+	)
 	if err != nil {
 		logger.Log.Error("failed to list users",
 			zap.Error(err),
 		)
-
 		return c.Status(500).JSON(fiber.Map{
 			"error": "failed to fetch users",
 		})
