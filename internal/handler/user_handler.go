@@ -5,7 +5,9 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 
+	"user-api/internal/logger"
 	"user-api/internal/models"
 	"user-api/internal/service"
 )
@@ -37,11 +39,19 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	if err := h.service.CreateUser(c.Context(), req.Name, req.Dob); err != nil {
+		logger.Log.Error("failed to create user",
+			zap.Error(err),
+			zap.String("name", req.Name),
+		)
+
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
+	logger.Log.Info("user created",
+		zap.String("name", req.Name),
+	)
 	return c.SendStatus(201)
 }
 
@@ -57,22 +67,36 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 
 	user, err := h.service.GetUserByID(c.Context(), int32(id))
 	if err != nil {
+		logger.Log.Error("failed to get user",
+			zap.Error(err),
+			zap.Int("user_id", id),
+		)
 		return c.Status(404).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "user not found",
 		})
 	}
 
+	logger.Log.Info("user fetched",
+		zap.Int("user_id", id),
+	)
 	return c.JSON(user)
 }
 
 func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 	users, err := h.service.ListUsers(c.Context())
 	if err != nil {
+		logger.Log.Error("failed to list users",
+			zap.Error(err),
+		)
+
 		return c.Status(500).JSON(fiber.Map{
 			"error": "failed to fetch users",
 		})
 	}
 
+	logger.Log.Info("users listed",
+		zap.Int("count", len(users)),
+	)
 	return c.JSON(users)
 }
 
@@ -92,10 +116,17 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	user, err := h.service.UpdateUser(c.Context(), int32(id), req.Name, req.Dob)
+	logger.Log.Error("failed to update user",
+		zap.Error(err),
+		zap.Int("user_id", id),
+	)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "update failed"})
 	}
 
+	logger.Log.Info("user updated",
+		zap.Int("user_id", id),
+	)
 	return c.JSON(user)
 }
 
@@ -106,8 +137,15 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	}
 
 	if err := h.service.DeleteUser(c.Context(), int32(id)); err != nil {
+		logger.Log.Error("failed to delete user",
+			zap.Error(err),
+			zap.Int("user_id", id),
+		)
 		return c.Status(500).JSON(fiber.Map{"error": "delete failed"})
 	}
 
-	return c.Status(200).SendString("Deleted successfully")
+	logger.Log.Info("user deleted",
+		zap.Int("user_id", id),
+	)
+	return c.SendStatus(204)
 }
