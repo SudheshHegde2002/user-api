@@ -15,11 +15,16 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
 	logger.Init()
 	defer logger.Log.Sync()
+
+	logger.Log.Info("server starting",
+		zap.String("port", "3000"),
+	)
 
 	envErr := godotenv.Load()
 	if envErr != nil {
@@ -56,4 +61,9 @@ func main() {
 	})
 
 	log.Fatal(app.Listen(":3000"))
+
+	logger.Log.Info("server started!",
+		zap.String("port", "3000"),
+	)
+
 }

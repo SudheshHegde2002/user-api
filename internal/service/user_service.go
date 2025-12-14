@@ -3,8 +3,11 @@ package service
 import (
 	"context"
 	"time"
+	"user-api/internal/logger"
 	"user-api/internal/models"
 	"user-api/internal/repository"
+
+	"go.uber.org/zap"
 )
 
 type UserService struct {
@@ -22,6 +25,9 @@ func (s *UserService) CreateUser(
 ) error {
 	_, err := time.Parse("2006-01-02", dobStr)
 	if err != nil {
+		logger.Log.Warn("invalid dob format",
+			zap.String("dob", dobStr),
+		)
 		return err
 	}
 
@@ -77,6 +83,10 @@ func (s *UserService) UpdateUser(
 ) (*models.UserResponse, error) {
 
 	if _, err := time.Parse("2006-01-02", dobStr); err != nil {
+		logger.Log.Warn("invalid dob format for update",
+			zap.Int32("user_id", id),
+			zap.String("dob", dobStr),
+		)
 		return nil, err
 	}
 
