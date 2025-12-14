@@ -6,6 +6,7 @@ import (
 	"os"
 	"user-api/db/sqlc"
 	"user-api/internal/handler"
+	"user-api/internal/logger"
 	"user-api/internal/repository"
 	"user-api/internal/routes"
 	"user-api/internal/service"
@@ -17,6 +18,9 @@ import (
 )
 
 func main() {
+	logger.Init()
+	defer logger.Log.Sync()
+
 	envErr := godotenv.Load()
 	if envErr != nil {
 		log.Fatal("Error loading .env file", envErr)
