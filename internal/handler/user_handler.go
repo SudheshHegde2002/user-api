@@ -75,3 +75,26 @@ func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 
 	return c.JSON(users)
 }
+
+func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid user id"})
+	}
+
+	var req models.CreateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "invalid body"})
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	user, err := h.service.UpdateUser(c.Context(), int32(id), req.Name, req.Dob)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "update failed"})
+	}
+
+	return c.JSON(user)
+}

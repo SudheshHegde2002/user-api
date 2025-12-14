@@ -10,4 +10,5 @@ func RegisterUserRoutes(app *fiber.App, h *handler.UserHandler) {
 	app.Post("/users", h.CreateUser)
 	app.Get("/users/:id", h.GetUserByID)
 	app.Get("/users", h.ListUsers)
+	app.Put("/users/:id", h.UpdateUser)
 }
