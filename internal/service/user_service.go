@@ -38,7 +38,7 @@ func (s *UserService) CreateUser(
 	return &models.UserResponse{
 		ID:   u.ID,
 		Name: u.Name,
-		Dob:  u.Dob.Time,
+		Dob:  u.Dob.Time.Format("2006-01-02"),
 	}, nil
 }
 
@@ -55,7 +55,7 @@ func (s *UserService) GetUserByID(
 	return &models.UserResponse{
 		ID:   user.ID,
 		Name: user.Name,
-		Dob:  user.Dob.Time,
+		Dob:  user.Dob.Time.Format("2006-01-02"),
 		Age:  age,
 	}, nil
 }
@@ -77,7 +77,7 @@ func (s *UserService) ListUsers(
 		resp = append(resp, models.UserResponse{
 			ID:   u.ID,
 			Name: u.Name,
-			Dob:  u.Dob.Time,
+			Dob:  u.Dob.Time.Format("2006-01-02"),
 			Age:  calculateAge(u.Dob.Time),
 		})
 	}
@@ -108,8 +108,7 @@ func (s *UserService) UpdateUser(
 	return &models.UserResponse{
 		ID:   u.ID,
 		Name: u.Name,
-		Dob:  u.Dob.Time,
-		Age:  calculateAge(u.Dob.Time),
+		Dob:  u.Dob.Time.Format("2006-01-02"),
 	}, nil
 }
 
