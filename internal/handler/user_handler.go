@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strconv"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
@@ -41,4 +43,24 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(201)
+}
+
+func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid user id",
+		})
+	}
+
+	user, err := h.service.GetUserByID(c.Context(), int32(id))
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"error": "user not found",
+		})
+	}
+
+	return c.JSON(user)
 }
