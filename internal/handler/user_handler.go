@@ -109,5 +109,5 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "delete failed"})
 	}
 
-	return c.SendStatus(204)
+	return c.Status(200).SendString("Deleted successfully")
 }
