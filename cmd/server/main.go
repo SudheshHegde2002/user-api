@@ -27,10 +27,8 @@ func main() {
 		zap.String("port", "3000"),
 	)
 
-	envErr := godotenv.Load()
-	if envErr != nil {
-		log.Fatal("Error loading .env file", envErr)
-	}
+	_= godotenv.Load()
+
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
